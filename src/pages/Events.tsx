@@ -270,10 +270,7 @@ const EventsPage = () => {
               Past
             </Button>
             
-            <Button variant="outline" size="sm" className="ml-auto hidden sm:flex">
-              <CalendarDays className="w-4 h-4 mr-2" />
-              Calendar View
-            </Button>
+            
           </div>
 
           {/* Search and Filters */}
