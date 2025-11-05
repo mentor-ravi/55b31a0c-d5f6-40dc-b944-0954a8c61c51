@@ -223,8 +223,6 @@ const ExploreSection = () => {
                 ✨
               </motion.div>)}
 
-            {/* Leaf decorations */}
-            {[...Array(8)].map((_, i) => {})}
 
             {domains.map(domain => <DomainNode key={domain.id} domain={domain} isSelected={false} isHidden={false} onClick={() => handleDomainClick(domain)} onHoverChange={isHovered => setHoveredDomainId(isHovered ? domain.id : null)} zIndex={getZIndex(domain.id)} />)}
           </div>
