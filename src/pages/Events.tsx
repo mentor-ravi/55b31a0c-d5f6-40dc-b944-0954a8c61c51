@@ -168,49 +168,7 @@ const upcomingEvents: Event[] = [{
   requirements: ["Open mind and willingness to explore new possibilities", "Resume or CV (optional but recommended)", "Career goals or challenges to discuss"],
   benefits: ["Personalized career transition roadmap", "Resume review checklist", "Access to job transition resources", "Connect with career counselors and recruiters"]
 }];
-const pastEvents: Event[] = [{
-  id: 5,
-  title: "Innovation Lab 2024",
-  organizer: {
-    name: "James Wilson",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=James"
-  },
-  date: "2024-12-10",
-  time: "9:00 AM",
-  location: "Tech Park, Downtown",
-  tags: ["innovation", "startup", "technology"],
-  status: "going",
-  attendees: [{
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tom",
-    name: "Tom"
-  }, {
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lisa",
-    name: "Lisa"
-  }],
-  additionalAttendees: 248,
-  image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80"
-}, {
-  id: 6,
-  title: "Agritech Expo 2024",
-  organizer: {
-    name: "Priya Sharma",
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya"
-  },
-  date: "2024-11-15",
-  time: "10:00 AM",
-  location: "Exhibition Center",
-  tags: ["agritech", "innovation", "farming"],
-  status: "going",
-  attendees: [{
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Raj",
-    name: "Raj"
-  }, {
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Anita",
-    name: "Anita"
-  }],
-  additionalAttendees: 398,
-  image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=400&q=80"
-}];
+const pastEvents: Event[] = [];
 const EventsPage = () => {
   const navigate = useNavigate();
   const { 
