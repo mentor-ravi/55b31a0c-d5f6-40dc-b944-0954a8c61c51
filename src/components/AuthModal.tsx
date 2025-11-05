@@ -307,7 +307,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="flex justify-center">
                 <Button type="button" variant="outline" onClick={async () => {
               const {
                 supabase
