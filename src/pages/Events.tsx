@@ -171,24 +171,26 @@ const upcomingEvents: Event[] = [{
 const pastEvents: Event[] = [];
 const EventsPage = () => {
   const navigate = useNavigate();
-  const { 
-    showAuthModal, 
-    setShowAuthModal, 
-    executeProtectedAction, 
-    completePendingAction, 
-    clearPendingAction 
+  const {
+    showAuthModal,
+    setShowAuthModal,
+    executeProtectedAction,
+    completePendingAction,
+    clearPendingAction
   } = useProtectedAction();
-  
   const [activeTab, setActiveTab] = useState<TabType>("upcoming");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("date");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [imagePopup, setImagePopup] = useState<{ src: string; alt: string } | null>(null);
-  
+  const [imagePopup, setImagePopup] = useState<{
+    src: string;
+    alt: string;
+  } | null>(null);
+
   // Handle pending action after login
   useEffect(() => {
-    completePendingAction((action) => {
+    completePendingAction(action => {
       if (action.type === 'register_event' && action.data) {
         // Navigate to event registration page
         navigate(`/event-registration?eventId=${action.data.id}`);
@@ -267,7 +269,7 @@ const EventsPage = () => {
             <Button variant={activeTab === "past" ? "default" : "ghost"} onClick={() => setActiveTab("past")} className={activeTab === "past" ? "bg-primary text-primary-foreground" : ""}>
               Past
             </Button>
-            <span className="text-muted-foreground text-sm md:text-base">{eventCount} events</span>
+            
             <Button variant="outline" size="sm" className="ml-auto hidden sm:flex">
               <CalendarDays className="w-4 h-4 mr-2" />
               Calendar View
@@ -312,7 +314,9 @@ const EventsPage = () => {
             day,
             dayName
           } = formatDate(event.date);
-          return <div key={event.id} className="flex gap-3 md:gap-6 relative" onClick={() => window.location.href = '/prayukti-fest'} style={{ cursor: 'pointer' }}>
+          return <div key={event.id} className="flex gap-3 md:gap-6 relative" onClick={() => window.location.href = '/prayukti-fest'} style={{
+            cursor: 'pointer'
+          }}>
                 {/* Date Column */}
                 <div className="flex-shrink-0 w-16 md:w-24 text-center relative">
                   <div className="relative z-10 py-2">
@@ -327,22 +331,20 @@ const EventsPage = () => {
                 </div>
 
                 {/* Event Card */}
-                <div className="flex-1 bg-card border border-border rounded-xl p-4 md:p-6 hover:shadow-lg transition-all cursor-pointer animate-fade-in" onClick={(e) => { 
-                  if (index === 0) {
-                    // First card redirects to /prayukti-fest
-                    return;
-                  }
-                  e.stopPropagation(); 
-                  setSelectedEvent(event); 
-                }}>
+                <div className="flex-1 bg-card border border-border rounded-xl p-4 md:p-6 hover:shadow-lg transition-all cursor-pointer animate-fade-in" onClick={e => {
+              if (index === 0) {
+                // First card redirects to /prayukti-fest
+                return;
+              }
+              e.stopPropagation();
+              setSelectedEvent(event);
+            }}>
                   <div className="flex flex-col md:flex-row gap-4 md:gap-6">
                     {/* Event Details */}
                   <div className="flex-1 space-y-3 md:space-y-4">
-                      {index === 0 && (
-                        <Badge className="bg-primary/10 text-primary border-primary/20 mb-2">
+                      {index === 0 && <Badge className="bg-primary/10 text-primary border-primary/20 mb-2">
                           Graphic Era Fest
-                        </Badge>
-                      )}
+                        </Badge>}
                       <div className="text-xs md:text-sm text-muted-foreground">{event.time}</div>
                       
                       <h3 className="text-xl md:text-2xl font-bold">{event.title}</h3>
@@ -389,13 +391,13 @@ const EventsPage = () => {
                     </div>
 
                     {/* Event Image */}
-                    <div 
-                      className="w-full md:w-48 h-40 md:h-48 rounded-lg overflow-hidden flex-shrink-0 hover-scale bg-muted/30 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setImagePopup({ src: event.image, alt: event.title });
-                      }}
-                    >
+                    <div className="w-full md:w-48 h-40 md:h-48 rounded-lg overflow-hidden flex-shrink-0 hover-scale bg-muted/30 cursor-pointer" onClick={e => {
+                  e.stopPropagation();
+                  setImagePopup({
+                    src: event.image,
+                    alt: event.title
+                  });
+                }}>
                       <img src={event.image} alt={event.title} className="w-full h-full object-contain" />
                     </div>
                   </div>
@@ -424,10 +426,10 @@ const EventsPage = () => {
 
               <div className="space-y-4 md:space-y-6 mt-4">
                 {/* Event Image */}
-                <div 
-                  className="w-full h-48 md:h-64 rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity bg-muted/30 flex items-center justify-center"
-                  onClick={() => setImagePopup({ src: selectedEvent.image, alt: selectedEvent.title })}
-                >
+                <div className="w-full h-48 md:h-64 rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity bg-muted/30 flex items-center justify-center" onClick={() => setImagePopup({
+              src: selectedEvent.image,
+              alt: selectedEvent.title
+            })}>
                   <img src={selectedEvent.image} alt={selectedEvent.title} className="w-full h-full object-contain" />
                 </div>
 
@@ -579,25 +581,16 @@ const EventsPage = () => {
 
                 {/* Action Buttons */}
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button 
-                    className="w-full" 
-                    size="lg"
-                    onClick={() => {
-                      if (selectedEvent.status === "going") {
-                        // Already registered
-                        return;
-                      }
-                      
-                      executeProtectedAction(
-                        'register_event',
-                        selectedEvent,
-                        () => {
-                          // Navigate to event registration
-                          navigate(`/event-registration?eventId=${selectedEvent.id}`);
-                        }
-                      );
-                    }}
-                  >
+                  <Button className="w-full" size="lg" onClick={() => {
+                if (selectedEvent.status === "going") {
+                  // Already registered
+                  return;
+                }
+                executeProtectedAction('register_event', selectedEvent, () => {
+                  // Navigate to event registration
+                  navigate(`/event-registration?eventId=${selectedEvent.id}`);
+                });
+              }}>
                     {selectedEvent.status === "going" ? "You're Going" : selectedEvent.status === "interested" ? "Mark as Going" : "Register Now"}
                   </Button>
                   <div className="flex flex-col sm:flex-row gap-3">
@@ -618,55 +611,30 @@ const EventsPage = () => {
       {/* Image Popup */}
       <Dialog open={!!imagePopup} onOpenChange={() => setImagePopup(null)}>
         <DialogContent className="max-w-6xl max-h-[95vh] p-0 bg-transparent border-0 shadow-none">
-          {imagePopup && (
-            <div className="relative w-full h-full flex items-center justify-center">
+          {imagePopup && <div className="relative w-full h-full flex items-center justify-center">
               {/* Backdrop with 30% opacity */}
               <div className="absolute inset-0 backdrop-blur-sm bg-black/30 rounded-lg" />
               
               {/* Image */}
               <div className="relative z-10 w-full max-h-[90vh] flex items-center justify-center p-4">
-                <img 
-                  src={imagePopup.src} 
-                  alt={imagePopup.alt} 
-                  className="max-w-full max-h-[85vh] object-contain rounded-lg"
-                />
+                <img src={imagePopup.src} alt={imagePopup.alt} className="max-w-full max-h-[85vh] object-contain rounded-lg" />
               </div>
               
               {/* Close Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 z-20 bg-background/80 hover:bg-background backdrop-blur-sm"
-                onClick={() => setImagePopup(null)}
-              >
+              <Button variant="ghost" size="icon" className="absolute top-4 right-4 z-20 bg-background/80 hover:bg-background backdrop-blur-sm" onClick={() => setImagePopup(null)}>
                 <span className="sr-only">Close</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               </Button>
-            </div>
-          )}
+            </div>}
         </DialogContent>
       </Dialog>
 
       <Footer />
       
-      <AuthModal 
-        isOpen={showAuthModal} 
-        onClose={clearPendingAction}
-        message="Please sign in to continue with your registration 🚀"
-      />
+      <AuthModal isOpen={showAuthModal} onClose={clearPendingAction} message="Please sign in to continue with your registration 🚀" />
     </div>;
 };
 export default EventsPage;
