@@ -18,7 +18,6 @@ type Internship = {
   location?: string;
   created_at: string;
 };
-
 type Event = {
   id: string;
   title: string;
@@ -37,19 +36,23 @@ const Events = () => {
   const [loadingInternships, setLoadingInternships] = useState(true);
   const [loadingEvents, setLoadingEvents] = useState(true);
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
 
   // Fetch internships
   useEffect(() => {
     const fetchInternships = async () => {
       try {
-        const { data, error } = await supabase
-          .from('internships')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(3);
-
+        const {
+          data,
+          error
+        } = await supabase.from('internships').select('*').order('created_at', {
+          ascending: false
+        }).limit(3);
         if (error) throw error;
         setInternships(data || []);
       } catch (error) {
@@ -57,35 +60,26 @@ const Events = () => {
         toast({
           title: "Error",
           description: "Failed to load internships",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoadingInternships(false);
       }
     };
-
     fetchInternships();
 
     // Realtime subscription for internships
-    const internshipsChannel = supabase
-      .channel('internships-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'internships'
-        },
-        (payload) => {
-          setInternships((prev) => [payload.new as Internship, ...prev].slice(0, 3));
-          toast({
-            title: "New Opportunity! 🚀",
-            description: `${(payload.new as Internship).title} just posted!`,
-          });
-        }
-      )
-      .subscribe();
-
+    const internshipsChannel = supabase.channel('internships-changes').on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'internships'
+    }, payload => {
+      setInternships(prev => [payload.new as Internship, ...prev].slice(0, 3));
+      toast({
+        title: "New Opportunity! 🚀",
+        description: `${(payload.new as Internship).title} just posted!`
+      });
+    }).subscribe();
     return () => {
       supabase.removeChannel(internshipsChannel);
     };
@@ -95,13 +89,12 @@ const Events = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const { data, error } = await supabase
-          .from('events')
-          .select('*')
-          .in('status', ['upcoming', 'ongoing'])
-          .order('created_at', { ascending: false })
-          .limit(3);
-
+        const {
+          data,
+          error
+        } = await supabase.from('events').select('*').in('status', ['upcoming', 'ongoing']).order('created_at', {
+          ascending: false
+        }).limit(3);
         if (error) throw error;
         setEvents(data || []);
       } catch (error) {
@@ -109,43 +102,33 @@ const Events = () => {
         toast({
           title: "Error",
           description: "Failed to load events",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoadingEvents(false);
       }
     };
-
     fetchEvents();
 
     // Realtime subscription for events
-    const eventsChannel = supabase
-      .channel('events-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'events'
-        },
-        (payload) => {
-          const newEvent = payload.new as Event;
-          if (newEvent.status === 'upcoming' || newEvent.status === 'ongoing') {
-            setEvents((prev) => [newEvent, ...prev].slice(0, 3));
-            toast({
-              title: "New Event! 🎉",
-              description: `${newEvent.title} just announced!`,
-            });
-          }
-        }
-      )
-      .subscribe();
-
+    const eventsChannel = supabase.channel('events-changes').on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'events'
+    }, payload => {
+      const newEvent = payload.new as Event;
+      if (newEvent.status === 'upcoming' || newEvent.status === 'ongoing') {
+        setEvents(prev => [newEvent, ...prev].slice(0, 3));
+        toast({
+          title: "New Event! 🎉",
+          description: `${newEvent.title} just announced!`
+        });
+      }
+    }).subscribe();
     return () => {
       supabase.removeChannel(eventsChannel);
     };
   }, [toast]);
-
   const handleInternshipAction = (internshipId: string) => {
     if (!user) {
       setIsAuthModalOpen(true);
@@ -153,18 +136,15 @@ const Events = () => {
     }
     navigate(`/career?internship=${internshipId}`);
   };
-
   const getEventRoute = (event: Event): string => {
     // Map event titles to their specific routes
     const eventRouteMap: Record<string, string> = {
       'Graphic Era Fest': '/prayukti-fest',
-      'Prayukti': '/prayukti-fest',
+      'Prayukti': '/prayukti-fest'
       // Add more event mappings here as needed
     };
-    
     return eventRouteMap[event.title] || `/event-registration?event=${event.id}`;
   };
-
   const handleEventAction = (event: Event) => {
     if (!user) {
       setIsAuthModalOpen(true);
@@ -175,113 +155,7 @@ const Events = () => {
   };
   return <section id="events" className="py-10 bg-background">
       {/* Internship Opportunities Section */}
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight">
-            <span className="text-primary">Internship </span>
-            <span className="text-foreground">Opportunities</span>
-          </h2>
-          <p className="text-lg text-muted-foreground">
-            Gain real-world experience and kickstart your career with our internship programs
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 max-w-5xl mx-auto">
-          {loadingInternships ? (
-            // Loading skeletons
-            <>
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
-                  <Skeleton className="h-36 w-full" />
-                  <div className="p-4 space-y-3">
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-16 w-full" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-4 w-1/2" />
-                    <Skeleton className="h-10 w-full" />
-                  </div>
-                </div>
-              ))}
-            </>
-          ) : internships.length === 0 ? (
-            // Empty state
-            <div className="col-span-full text-center py-12">
-              <Briefcase className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h3 className="text-xl font-semibold mb-2">No opportunities posted yet</h3>
-              <p className="text-muted-foreground">Check back soon! 🚀</p>
-            </div>
-          ) : (
-            // Actual internship cards
-            internships.map((internship) => (
-              <div key={internship.id} className="group bg-card rounded-xl border border-border overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col animate-fade-in">
-                <div className="relative h-36 overflow-hidden bg-gradient-to-br from-primary/20 to-accent/20">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-4xl opacity-30">💼</div>
-                  </div>
-                  <Badge className="absolute top-3 right-3 bg-primary text-primary-foreground">
-                    Open
-                  </Badge>
-                </div>
-                
-                <div className="p-4 flex flex-col h-full">
-                  <h3 className="text-lg font-bold mb-2 text-foreground line-clamp-1">
-                    {internship.title}
-                  </h3>
-                  
-                  {internship.company && (
-                    <p className="text-sm font-medium text-primary mb-2">
-                      {internship.company}
-                    </p>
-                  )}
-                  
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-2 flex-grow">
-                    {internship.description}
-                  </p>
-
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="w-4 h-4" />
-                      <span>Duration: {internship.duration || 'Not specified'}</span>
-                    </div>
-                    {internship.location && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <MapPin className="w-4 h-4" />
-                        <span>{internship.location}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex gap-2 mt-auto">
-                    <Button 
-                      className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90" 
-                      size="sm" 
-                      onClick={() => handleInternshipAction(internship.id)}
-                    >
-                      Apply Now
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate(`/career?internship=${internship.id}`)}
-                    >
-                      Details
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="text-center flex justify-center mb-24">
-          <Button size="lg" className="group bg-primary text-primary-foreground hover:bg-primary/90 transition-all" asChild>
-            <Link to="/career">
-              View All Internships
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </Button>
-        </div>
-      </div>
+      
 
       {/* Featured Events Section */}
       <div className="container mx-auto px-4">
@@ -296,66 +170,42 @@ const Events = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">
-          {loadingEvents ? (
-            // Loading skeletons
-            <>
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="min-h-[400px]">
+          {loadingEvents ?
+        // Loading skeletons
+        <>
+              {[1, 2, 3].map(i => <div key={i} className="min-h-[400px]">
                   <Skeleton className="w-full h-full rounded-2xl" />
-                </div>
-              ))}
-            </>
-          ) : events.length === 0 ? (
-            // Empty state
-            <div className="col-span-full text-center py-12">
+                </div>)}
+            </> : events.length === 0 ?
+        // Empty state
+        <div className="col-span-full text-center py-12">
               <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground opacity-50" />
               <h3 className="text-xl font-semibold mb-2">No events currently scheduled</h3>
               <p className="text-muted-foreground">Exciting things are coming! 🎉</p>
-            </div>
-          ) : (
-            // Actual event cards
-            events.map((event) => (
-              <div key={event.id} className="group [perspective:1000px] animate-fade-in">
+            </div> :
+        // Actual event cards
+        events.map(event => <div key={event.id} className="group [perspective:1000px] animate-fade-in">
                 <div className="relative w-full min-h-[400px] transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
                   {/* Front Face */}
                   <div className="absolute inset-0 rounded-2xl overflow-hidden [backface-visibility:hidden] pointer-events-none">
-                    {event.banner_url ? (
-                      <div 
-                        className="relative w-full min-h-[400px] flex items-center justify-center"
-                        style={{
-                          backgroundImage: `url(${event.banner_url})`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center'
-                        }}
-                      >
+                    {event.banner_url ? <div className="relative w-full min-h-[400px] flex items-center justify-center" style={{
+                backgroundImage: `url(${event.banner_url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}>
                         {/* Backdrop filter overlay */}
                         <div className="absolute inset-0 backdrop-blur-2xl bg-black/50 rounded-2xl"></div>
                         
                         {/* Centered banner image */}
-                        <img 
-                          src={event.banner_url} 
-                          alt={event.title} 
-                          loading="lazy"
-                          decoding="async"
-                          className="relative z-10 w-full h-auto object-contain rounded-2xl max-h-[300px]"
-                        />
+                        <img src={event.banner_url} alt={event.title} loading="lazy" decoding="async" className="relative z-10 w-full h-auto object-contain rounded-2xl max-h-[300px]" />
                         
                         {/* Bottom gradient for text readability */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent rounded-2xl z-20"></div>
-                      </div>
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30">
+                      </div> : <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"></div>
-                      </div>
-                    )}
+                      </div>}
                     
-                    <Badge className={`absolute top-4 right-4 z-30 ${
-                      event.status === "upcoming" 
-                        ? "bg-primary/90 text-primary-foreground backdrop-blur-sm" 
-                        : event.status === "ongoing" 
-                        ? "bg-accent/90 text-accent-foreground backdrop-blur-sm" 
-                        : "bg-muted/90 text-muted-foreground backdrop-blur-sm"
-                    }`}>
+                    <Badge className={`absolute top-4 right-4 z-30 ${event.status === "upcoming" ? "bg-primary/90 text-primary-foreground backdrop-blur-sm" : event.status === "ongoing" ? "bg-accent/90 text-accent-foreground backdrop-blur-sm" : "bg-muted/90 text-muted-foreground backdrop-blur-sm"}`}>
                       {event.status}
                     </Badge>
 
@@ -396,22 +246,16 @@ const Events = () => {
                         </div>
                       </div>
 
-                      <Button 
-                        className="w-full bg-primary text-primary-foreground hover:bg-primary/90 pointer-events-auto" 
-                        size="sm" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEventAction(event);
-                        }}
-                      >
+                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 pointer-events-auto" size="sm" onClick={e => {
+                  e.stopPropagation();
+                  handleEventAction(event);
+                }}>
                         {event.status === "upcoming" ? "Register Now" : "Join Event"}
                       </Button>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              </div>)}
         </div>
 
         <div className="text-center flex justify-center">
