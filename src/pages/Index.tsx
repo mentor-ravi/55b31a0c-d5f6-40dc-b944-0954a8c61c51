@@ -24,14 +24,14 @@ const Index = () => {
         <section id="explore">
           <ExploreSection />
         </section>
+        <section id="internships">
+          <InternshipCards />
+        </section>
         <section id="events">
           <Events />
         </section>
         <section id="courses">
           <Courses />
-        </section>
-        <section id="internships">
-          <InternshipCards />
         </section>
         
         <section id="faq-contact" className="py-16 px-4 bg-gradient-subtle">
