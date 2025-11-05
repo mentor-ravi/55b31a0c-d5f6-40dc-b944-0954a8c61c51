@@ -369,7 +369,7 @@ export function RegistrationForm() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold border-b pb-2">Team Leader (Member 1)</h3>
                 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="teamLeader.fullName"
@@ -455,7 +455,7 @@ export function RegistrationForm() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="teamLeader.studentIdFile"
@@ -524,7 +524,7 @@ export function RegistrationForm() {
                     </Button>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={form.control}
                         name={`teamMembers.${index}.fullName`}
@@ -610,7 +610,7 @@ export function RegistrationForm() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FormField
                         control={form.control}
                         name={`teamMembers.${index}.studentIdFile`}
